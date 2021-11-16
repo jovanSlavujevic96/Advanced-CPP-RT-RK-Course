@@ -94,7 +94,7 @@ MyBigInt operator""_mbi(const char* x) noexcept(false)
 {
 	MyBigInt tmp(0);
 	int lit_len = std::strlen(x);
-	if (lit_len > 70)
+	if (lit_len > MyBigInt::size)
 	{
 		throw std::runtime_error("Literal has more than 70 digits!");
 	}

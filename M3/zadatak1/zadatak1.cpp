@@ -19,7 +19,7 @@ MyBigInt fibo(unsigned long long n)
 		x1 = std::move(x2);
 		x2 = std::move(t);
 	}
-	return x2;
+	return std::move(x2);
 }
 
 int main()

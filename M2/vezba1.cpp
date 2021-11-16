@@ -19,6 +19,7 @@ MyBigInt fibo(unsigned long long n)
 
 int main()
 {
+	/** https://en.cppreference.com/w/cpp/utility/initializer_list */
 	MyBigInt k{ 7 };
 	k = fibo(9);
 	std::cout << "fibo(9) = " << k << std::endl;
@@ -29,6 +30,7 @@ int main()
 	k = 13_mbi;
 	std::cout << k << std::endl;
 	MyBigInt l = fibo(300);
+	/** https://en.cppreference.com/w/cpp/language/user_literal */
 	if (l != 222232244629420445529739893461909967206666939096499764990979600_mbi) {
 		std::cout << "Greska!" << std::endl;
 		return 1;

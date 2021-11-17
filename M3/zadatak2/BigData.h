@@ -35,10 +35,6 @@ struct Data {
 
 	//ToDo: Add move ctor
 	Data(Data&& other) : size{ other.size } {
-		if (data)
-		{
-			delete[] data;
-		}
 		data = other.data;
 		other.data = nullptr;
 		other.size = 0;
@@ -108,33 +104,18 @@ public:
 
 	//ToDo: Add move ctor
 	BigData(BigData&& other) {
-		if (m_data.data)
-		{
-			delete[] m_data.data;
-		}
-		m_data.size = other.m_data.size;
-		m_data.data = other.m_data.data;
+		m_data = std::move(other.m_data);
 		m_crc = GetCrc(m_data);
-		other.m_data.data = nullptr;
-		other.m_data.size = 0;
 		other.m_crc = -1;
 	}
 
 	//ToDo: Add move assignment operator
 	BigData& operator=(BigData&& other) {
-		if (m_data.data)
-		{
-			delete[] m_data.data;
-		}
-		m_data.data = other.m_data.data;
-		m_data.size = other.m_data.size;
+		m_data = std::move(other.m_data);
 		m_crc = GetCrc(m_data);
-		other.m_data.data = nullptr;
-		other.m_data.size = 0;
 		other.m_crc = -1;
 		return *this;
 	}
-
 
 	void dump(ostream &_out) const {
 		_out << "CRC: " << m_crc << endl;

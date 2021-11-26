@@ -7,6 +7,7 @@
 #include <memory>
 #include <utility>
 #include <cassert>
+#include <cstring>
 
 #define DEFAULT_POOL_SIZE 10
 
@@ -21,7 +22,7 @@ namespace project
 
 		/* template objects PoolBase constructor(s) */
 		template <typename... Args>
-		PoolBase(int N, Args... args) : m_pool{ N } {
+		PoolBase(unsigned N, Args... args) : m_pool{ N } {
 			for (auto it = m_pool.begin(); it != m_pool.end(); it++) {
 				*it = new T(std::forward<Args>(args)...);
 			}
@@ -91,31 +92,30 @@ namespace project
 		}
 	};
 
-	template<typename T, int N = DEFAULT_POOL_SIZE>
+	template<typename T, unsigned N = DEFAULT_POOL_SIZE>
 	class Pool : public PoolBase<T>
 	{
-		static_assert(N > 0);
 	public:
 		/* template objects Pool constructor(s) */
 		template <typename... Args>
-		Pool(Args... args) : PoolBase(N, std::forward<Args>(args)...) {}
+		Pool(Args... args) : PoolBase<T>(N, std::forward<Args>(args)...) {}
 
-		Pool(T&& other) : PoolBase(N, std::move(other)) {}
+		Pool(T&& other) : PoolBase<T>(N, std::move(other)) {}
 
 		/* Pool copy constructor */
-		Pool(const PoolBase& x) : PoolBase(x) {}
+		Pool(const PoolBase<T>& x) : PoolBase<T>(x) {}
 
 		/* Pool move constructor */
-		Pool(PoolBase&& x) : PoolBase(x) {}
+		Pool(PoolBase<T>&& x) : PoolBase<T>(x) {}
 
 		/* Pool assign operator(s) */
-		Pool& operator=(const PoolBase& x) {
+		Pool& operator=(const PoolBase<T>& x) {
 			this->copy(x);
 			return *this;
 		}
 		
 		/* Pool move operator(s) */
-		Pool& operator=(PoolBase&& x) {
+		Pool& operator=(PoolBase<T>&& x) {
 			this->move(x);
 			return *this;
 		}
@@ -132,7 +132,7 @@ struct Test
 	Test(int a) : m_a{ a } {}
 	Test(float f, const char* word) {
 		m_a = (int)f;
-		for (auto it = word; it != word + strlen(word); ++it) {
+		for (auto it = word; it != word + std::strlen(word); ++it) {
 			m_a += *it;
 		}
 	}
@@ -148,7 +148,6 @@ int main()
 	project::Pool pool2(Test(1024));
 	project::Pool<Test, 2> pool3(404);
 	project::Pool<Test, 202> pool4;
-	//project::Pool<Test, -1> a; //error
 	auto pool5 = pool3;
 
 	auto size = pool1.getPoolSize();
@@ -169,6 +168,7 @@ int main()
 		assert(1024 == ptr->m_a);
 	}
 
+	assert(pool2.getPoolSize() == DEFAULT_POOL_SIZE);
 	pool2 = pool3;
 	assert(pool2.getPoolSize() != DEFAULT_POOL_SIZE);
 	assert(pool2.getPoolSize() == pool3.getPoolSize());

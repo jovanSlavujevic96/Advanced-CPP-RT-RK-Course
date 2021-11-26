@@ -15,7 +15,7 @@ namespace my_std
 	class function<FT(Args...)>
 	{
 		// REAL FUNCTION
-		typedef FT(*real_func)(Args...);
+		typedef FT(*real_func)(Args...); //using real_func = FT(*)(Args...)
 		real_func m_func = nullptr;
 
 		// FUNCTOR
@@ -109,10 +109,10 @@ namespace my_std
 
 		FT operator()(Args... args) noexcept(false) {
 			if (m_func) {
-				return m_func(args...);
+				return m_func(std::forward<Args>(args)...);
 			}
 			else if (m_functor_func && m_functor_obj) {
-				return m_functor_func(m_functor_obj.get(), args...);
+				return m_functor_func(m_functor_obj.get(), std::forward<Args>(args)...);
 			}
 			else {
 				throw std::runtime_error("function/functor is NULL");

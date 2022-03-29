@@ -1,1 +1,1 @@
-# Advanced-CPP-RT-RK-Course
+# Modern-CPP-NIT-Course
